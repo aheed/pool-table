@@ -1,23 +1,19 @@
-import * as math from 'mathjs';
-import { Mesh } from 'three';
+import { Euler, Mesh, Object3D, Vector3 } from 'three';
 
-export class PhysBody {
-    transMat = math.identity(4, 4);
-    public subBodies: Body[];
-    public grPrims: Mesh[];
-    lights: any[];
+export class PhysBody extends Object3D{
+    public physVelocity = new Vector3()
+    public physRotation = new Euler()
+    public subBodies: PhysBody[];
 
     constructor() {
+        super()
         this.subBodies = [];
-        this.grPrims = [];
-        this.lights = [];
     }
 
-    addBody = (newSubBody: Body) => {
+    addBody = (newSubBody: PhysBody) => {
         this.subBodies.push(newSubBody);
+        this.add(newSubBody);
     }
 
-    addLight = (newLight: any) => {
-        this.lights.push(newLight);
-    }
+    addGrPrim = (newPrim: Mesh) => this.add(newPrim);
 }
