@@ -1,0 +1,26 @@
+import * as math from 'mathjs';
+import { Mesh, Scene, WebGLRenderer } from 'three';
+import { PhysBody } from './PhysBody';
+
+export class PhysBodyRenderer {
+    
+    static addBodyToScene = (body: PhysBody, scene: Scene) => {
+        // todo: add subbodies recursively
+
+        body.grPrims.forEach(prim => {
+            // apply transform
+            scene.add(prim)
+        });
+    }
+
+    static updateTransform = (body: PhysBody) => {
+        // todo: update subbodies recursively
+
+        body.grPrims.forEach(prim => {
+            // apply transform
+            prim.translateX
+            prim.matrix
+            scene.add(prim)
+        });
+    }
+}
