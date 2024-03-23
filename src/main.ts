@@ -89,7 +89,7 @@ verify Object3D hierarchy is rendered recursively automatically*
 Derive PhysBody from Object3D
   (velocity, rotation: Matrix4)
   velocity: THREE.Vector3
-  rotation: THREE.Euler
+  rotation: THREE.Vector3 + number
   update function (recursive) for updating position and rotation by dt.
   Child bodies in separate collection
   Child bodies AND graphical primitives shall be in the children collection
@@ -99,7 +99,7 @@ PoolBall, derived from PhysBody
     So it should be a static factory function instead of subclass ?
 PoolTable, derived from PhysBody
   Update velocities and rotations of pool balls. Find out if there is any ball movement.
-Drop mathjs dependency
+Drop mathjs dependency*
 Immutable classes?
 
 */

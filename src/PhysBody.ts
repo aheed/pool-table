@@ -1,14 +1,15 @@
-import { Euler, Mesh, Object3D, Vector3 } from 'three';
+import { Mesh, Object3D, Vector3 } from 'three';
 
 export class PhysBody extends Object3D{
-    public physVelocity = new Vector3()
-    public physRotation = new Euler()
-    public subBodies: PhysBody[];
+    public physVelocity = new Vector3();
+    public physRotationAxisNormalized = new Vector3();
+    public physRotationRadPerSec: number = 0;
+    public subBodies: PhysBody[] = [];
 
-    constructor() {
+    /*constructor() {
         super()
         this.subBodies = [];
-    }
+    }*/
 
     addBody = (newSubBody: PhysBody) => {
         this.subBodies.push(newSubBody);
@@ -16,4 +17,25 @@ export class PhysBody extends Object3D{
     }
 
     addGrPrim = (newPrim: Mesh) => this.add(newPrim);
+
+    update = (dt: number) => {
+        this.subBodies.forEach(sb => sb.update(dt));
+
+        // position
+        const ds = this.physVelocity.multiplyScalar(dt);
+        this.position.add(ds)
+
+        // orientation
+        const angle = this.physRotationRadPerSec * dt;
+        this.rotateOnAxis(this.physRotationAxisNormalized, angle);
+    }
+
+    anyMovement = (): Boolean => {
+        if(this.physVelocity || this.physRotationRadPerSec) {
+            return true;
+        }
+
+        return this.subBodies.some(this.anyMovement);
+    }
+
 }
