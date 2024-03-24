@@ -84,12 +84,12 @@ aBody.addBody(bBody);
 /////////////////////////////////////////
 const table = new PoolTable()
 const ball1 = createPoolBall(3);
-ball1.physVelocity.x = 0.1;
-ball1.physVelocity.z = 0.4;
+ball1.physVelocity.x = 1.0;
+ball1.physVelocity.z = 2.4;
 table.addBall(ball1);
 const ball2 = createPoolBall(4);
-ball2.physVelocity.x = 0.02;
-ball2.physVelocity.z = 0.15;
+ball2.physVelocity.x = 0.2;
+ball2.physVelocity.z = 5.15;
 table.addBall(ball2);
 scene.add(table);
 
@@ -106,7 +106,7 @@ function animate() {
 	requestAnimationFrame( animate );
     //poolBallMesh.rotation.x += 0.01;
     //poolBallMesh.rotation.y += 0.01;
-  table.updateTable(0.1);
+  table.updateTable(0.02);
 	renderer.render( scene, camera );
 }
 animate();
