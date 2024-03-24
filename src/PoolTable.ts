@@ -1,6 +1,6 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from "three";
 import { PhysBody } from "./PhysBody";
-import { DECELERATION_M_PER_SEC2, ballRadius, tableDepth, tableThickness, tableWidth } from "./PoolGeometryConstants";
+import { DECELERATION_M_PER_SEC2, MIN_BALL_SPEED_M_PER_SEC, ballRadius, tableDepth, tableThickness, tableWidth } from "./PoolGeometryConstants";
 
 export class PoolTable extends PhysBody {
 
@@ -48,7 +48,10 @@ export class PoolTable extends PhysBody {
             else if (horizVelo.length() > 0) {
             }
             sb.physVelocity.add(veloChange);
-            
+
+            if (horizVelo.length() < MIN_BALL_SPEED_M_PER_SEC) {
+                sb.physVelocity.set(0, 0, 0);
+            }
 
             // update positions and orientations
             sb.update(dt)

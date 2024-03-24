@@ -31,11 +31,11 @@ export class PhysBody extends Object3D{
     }
 
     anyMovement = (): Boolean => {
-        if(this.physVelocity || this.physRotationRadPerSec) {
+        if(this.physVelocity.length() || this.physRotationRadPerSec) {
             return true;
         }
 
-        return this.subBodies.some(this.anyMovement);
+        return this.subBodies.some(sb => sb.anyMovement());
     }
 
 }

@@ -1,9 +1,6 @@
-import { createPoolBall } from './PoolBallFactory';
-import { PoolTable } from './PoolTable';
+import { createScenarioTable } from './ScenarioFactory';
 import './style.css'
-//import typescriptLogo from './typescript.svg'
-//import viteLogo from '/vite.svg'
-//import { setupCounter } from './counter.ts'
+
 import * as THREE from 'three';
 
 
@@ -18,95 +15,24 @@ scene.background = color5;
 camera.position.z = 5;
 camera.position.y = 0.7;
 
-/*
-// Define the sphere geometry
-const radius = 1; // Radius of the pool ball
-const segments = 32; // Number of horizontal and vertical segments
-const poolBallGeometry = new THREE.SphereGeometry(radius, segments, segments);
-const poolBallMaterial = new THREE.MeshBasicMaterial({ color: 0x990000, wireframe: true });
-// Create the pool ball mesh
-const poolBallMesh = new THREE.Mesh(poolBallGeometry, poolBallMaterial);
-//poolBallMesh.translateX(-4.5);
 
-
-
-scene.add(poolBallMesh);
-
-
-/////
-const pbg3 = new THREE.SphereGeometry(0.2, 32, 16);
-const pbm3 = new THREE.MeshBasicMaterial({ color: 0x22D377, wireframe: true });
-const pbmesh3 = new THREE.Mesh(pbg3, pbm3);
-const midobj = new THREE.Object3D();
-midobj.translateX(1.2);
-midobj.translateY(3.2);
-midobj.add(pbmesh3);
-poolBallMesh.add(midobj);
-/////
-*/
-/*
-/////////////////////////////////////////
-////////
-const aBody = new PhysBody();
-//aBody.translateY(-1.0);
-aBody.position.y -= 1.0;
-//const pbg2 = new THREE.SphereGeometry(0.5, 32, 16);
-const pbg2 = new THREE.BoxGeometry(3.0, 0.2, 6.0, 32, 16);
-const pbm2 = new THREE.MeshBasicMaterial({ color: 0x823377, wireframe: true });
-const pbmesh2 = new THREE.Mesh(pbg2, pbm2);
-pbmesh2.position.x += 0.0;
-aBody.addGrPrim(pbmesh2);
-scene.add(aBody);
-
-const bBody = new PhysBody();
-bBody.position.x += 1.0;
-bBody.rotation.z += 0.3;
-bBody.rotation.y += 0.5;
-
-const pbgc = new THREE.BoxGeometry(0.2, 0.2, 0.2, 4, 4);
-const pbmc = new THREE.MeshBasicMaterial({ color: 0x333300, wireframe: true });
-const pbmeshc = new THREE.Mesh(pbgc, pbmc);
-bBody.addGrPrim(pbmeshc);
-
-const pbgb = new THREE.BoxGeometry(1.0, 0.1, 2.0, 32, 16);
-const pbmb = new THREE.MeshBasicMaterial({ color: 0x117722, wireframe: true });
-const pbmeshb = new THREE.Mesh(pbgb, pbmb);
-pbmeshb.rotation.z += 0.5;
-pbmeshb.position.x += 2.0;
-bBody.addGrPrim(pbmeshb);
-aBody.addBody(bBody);
-*/
-////////
-/////////////////////////////////////////
-
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-const table = new PoolTable()
-const ball1 = createPoolBall(3);
-ball1.physVelocity.x = 1.0;
-ball1.physVelocity.z = 2.4;
-table.addBall(ball1);
-const ball2 = createPoolBall(4);
-ball2.physVelocity.x = 0.2;
-ball2.physVelocity.z = 5.15;
-table.addBall(ball2);
+let table =  createScenarioTable();
 scene.add(table);
 
 
-
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-
-
-///
 function animate() {
   //console.log("animate");
 	requestAnimationFrame( animate );
     //poolBallMesh.rotation.x += 0.01;
     //poolBallMesh.rotation.y += 0.01;
-  table.updateTable(0.02);
+  table.updateTable(0.04);
+  if (!table.anyMovement()) {
+    scene.remove(table);
+    // todo: dispose all table resources: geometry, material,...
+    table = createScenarioTable();
+    scene.add(table);
+  }
+  
 	renderer.render( scene, camera );
 }
 animate();
