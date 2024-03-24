@@ -1,4 +1,5 @@
-import { PhysBody } from './PhysBody';
+import { createPoolBall } from './PoolBallFactory';
+import { PoolTable } from './PoolTable';
 import './style.css'
 //import typescriptLogo from './typescript.svg'
 //import viteLogo from '/vite.svg'
@@ -12,7 +13,12 @@ const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.inner
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+const color5 = new THREE.Color( 'lightgray' );
+scene.background = color5;
+camera.position.z = 5;
+camera.position.y = 0.7;
 
+/*
 // Define the sphere geometry
 const radius = 1; // Radius of the pool ball
 const segments = 32; // Number of horizontal and vertical segments
@@ -22,11 +28,10 @@ const poolBallMaterial = new THREE.MeshBasicMaterial({ color: 0x990000, wirefram
 const poolBallMesh = new THREE.Mesh(poolBallGeometry, poolBallMaterial);
 //poolBallMesh.translateX(-4.5);
 
-const color5 = new THREE.Color( 'lightgray' );
-scene.background = color5;
+
 
 scene.add(poolBallMesh);
-camera.position.z = 5;
+
 
 /////
 const pbg3 = new THREE.SphereGeometry(0.2, 32, 16);
@@ -38,8 +43,8 @@ midobj.translateY(3.2);
 midobj.add(pbmesh3);
 poolBallMesh.add(midobj);
 /////
-
-
+*/
+/*
 /////////////////////////////////////////
 ////////
 const aBody = new PhysBody();
@@ -70,15 +75,38 @@ pbmeshb.rotation.z += 0.5;
 pbmeshb.position.x += 2.0;
 bBody.addGrPrim(pbmeshb);
 aBody.addBody(bBody);
-
+*/
 ////////
 /////////////////////////////////////////
 
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+const table = new PoolTable()
+const ball1 = createPoolBall(3);
+ball1.physVelocity.x = 0.1;
+ball1.physVelocity.z = 0.4;
+table.addBall(ball1);
+const ball2 = createPoolBall(4);
+ball2.physVelocity.x = 0.02;
+ball2.physVelocity.z = 0.15;
+table.addBall(ball2);
+scene.add(table);
+
+
+
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+
 ///
 function animate() {
+  //console.log("animate");
 	requestAnimationFrame( animate );
-    poolBallMesh.rotation.x += 0.01;
-    poolBallMesh.rotation.y += 0.01;
+    //poolBallMesh.rotation.x += 0.01;
+    //poolBallMesh.rotation.y += 0.01;
+  table.updateTable(0.1);
 	renderer.render( scene, camera );
 }
 animate();

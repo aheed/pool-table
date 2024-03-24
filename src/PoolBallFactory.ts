@@ -1,5 +1,6 @@
 import { Mesh, MeshBasicMaterial, SphereGeometry } from "three";
 import { PhysBody } from "./PhysBody";
+import { ballRadius } from "./PoolGeometryConstants";
 
 export const createPoolBall = (ballNumber: number): PhysBody => {
     if (ballNumber < 0 || ballNumber > 15) {
@@ -8,8 +9,8 @@ export const createPoolBall = (ballNumber: number): PhysBody => {
     }
 
     const color = 0x223300 + 10 * ballNumber; // temp
-    const radius = 1; // Radius of the pool ball
-    const segments = 32; // Number of horizontal and vertical segments
+    const radius = ballRadius;
+    const segments = 16; // Number of horizontal and vertical segments
     const poolBallGeometry = new SphereGeometry(radius, segments, segments);
     const poolBallMaterial = new MeshBasicMaterial({ color: color, wireframe: true });
     const mesh = new Mesh(poolBallGeometry, poolBallMaterial);

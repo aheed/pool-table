@@ -22,7 +22,7 @@ export class PhysBody extends Object3D{
         this.subBodies.forEach(sb => sb.update(dt));
 
         // position
-        const ds = this.physVelocity.multiplyScalar(dt);
+        const ds = this.physVelocity.clone().multiplyScalar(dt);
         this.position.add(ds)
 
         // orientation
