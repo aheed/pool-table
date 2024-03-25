@@ -17,21 +17,8 @@ scene.background = color5;
 camera.position.z = 5;
 camera.position.y = 0.7;
 
-//////////////
+
 const loader = new GLTFLoader();
-
-/*loader.load( 'pool_table/scene.gltf', function ( gltf ) {
-
-  const sfac = 1/100;
-  let scaleMat = new THREE.Matrix4().makeScale(sfac, sfac, sfac);
-  gltf.scene.applyMatrix4(scaleMat);
-	scene.add( gltf.scene );
-
-}, undefined, function ( error ) {
-
-	console.error( error );
-
-} );*/
 
 loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
 
@@ -52,7 +39,6 @@ loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
 
 const light = new THREE.AmbientLight( 0x404040, 30 ); // white light
 scene.add( light );
-/////////////////////////////
 
 let table =  createScenarioTable();
 scene.add(table);
