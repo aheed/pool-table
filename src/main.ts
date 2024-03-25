@@ -1,7 +1,9 @@
+import { PI } from 'three/examples/jsm/nodes/Nodes.js';
 import { createScenarioTable } from './ScenarioFactory';
 import './style.css'
 
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
 const scene = new THREE.Scene();
@@ -15,6 +17,42 @@ scene.background = color5;
 camera.position.z = 5;
 camera.position.y = 0.7;
 
+//////////////
+const loader = new GLTFLoader();
+
+/*loader.load( 'pool_table/scene.gltf', function ( gltf ) {
+
+  const sfac = 1/100;
+  let scaleMat = new THREE.Matrix4().makeScale(sfac, sfac, sfac);
+  gltf.scene.applyMatrix4(scaleMat);
+	scene.add( gltf.scene );
+
+}, undefined, function ( error ) {
+
+	console.error( error );
+
+} );*/
+
+loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
+
+  const sfac = 1/1;
+  let scaleMat = new THREE.Matrix4().makeScale(sfac, sfac, sfac);
+  gltf.scene.applyMatrix4(scaleMat);
+  gltf.scene.translateX(1.5);
+  gltf.scene.translateY(0.1);
+  gltf.scene.translateZ(6.0);
+  gltf.scene.rotateY(Math.PI / 2);
+	scene.add( gltf.scene );
+
+}, undefined, function ( error ) {
+
+	console.error( error );
+
+} );
+
+const light = new THREE.AmbientLight( 0x404040, 30 ); // white light
+scene.add( light );
+/////////////////////////////
 
 let table =  createScenarioTable();
 scene.add(table);
