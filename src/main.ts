@@ -1,4 +1,3 @@
-import { PI } from 'three/examples/jsm/nodes/Nodes.js';
 import { createScenarioTable } from './ScenarioFactory';
 import './style.css'
 
@@ -79,6 +78,12 @@ PoolTable, derived from PhysBody
   Update velocities and rotations of pool balls. Find out if there is any ball movement.
 Drop mathjs dependency*
 Immutable classes?
+
+Add light source(s)
+Option to shade nicely, keep option for wireframe mode for debugging
+Try out physics engine
+  https://threejs.org/docs/#manual/en/introduction/Libraries-and-Plugins
+
 
 */
 
