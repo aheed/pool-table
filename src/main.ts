@@ -13,8 +13,13 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 const color5 = new THREE.Color( 'lightgray' );
 scene.background = color5;
-camera.position.z = 5;
-camera.position.y = 0.7;
+camera.position.z = 7;
+camera.position.y = 2.7;
+camera.rotateX(-0.8);
+
+// White directional light at half intensity shining from the top.
+const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+scene.add( directionalLight );
 
 
 const loader = new GLTFLoader();
