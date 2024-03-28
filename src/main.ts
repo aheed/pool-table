@@ -26,12 +26,12 @@ const loader = new GLTFLoader();
 
 loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
 
-  const sfac = 1/1;
+  const sfac = 0.902652208826061;
   let scaleMat = new THREE.Matrix4().makeScale(sfac, sfac, sfac);
   gltf.scene.applyMatrix4(scaleMat);
-  gltf.scene.translateX(1.5);
+  gltf.scene.translateX(1.4158680300807);
   gltf.scene.translateY(0.1);
-  gltf.scene.translateZ(6.0);
+  gltf.scene.translateZ(5.65198550990462);
   gltf.scene.rotateY(Math.PI / 2);
 	scene.add( gltf.scene );
 
@@ -68,27 +68,28 @@ animate();
 /*
 to do:
 verify Object3D hierarchy is rendered recursively automatically*
-Derive PhysBody from Object3D
+Derive PhysBody from Object3D*
   (velocity, rotation: Matrix4)
   velocity: THREE.Vector3
   rotation: THREE.Vector3 + number
   update function (recursive) for updating position and rotation by dt.
   Child bodies in separate collection
   Child bodies AND graphical primitives shall be in the children collection
-PoolBall, derived from PhysBody
-  Construct by number
-  Does not need any other properties than PhysBody (?)
-    So it should be a static factory function instead of subclass ?
-PoolTable, derived from PhysBody
-  Update velocities and rotations of pool balls. Find out if there is any ball movement.
+PoolBall ( derived from PhysBody)*
+  Construct by number*
+  Does not need any other properties than PhysBody (?). Right, so no need for a class.
+    So it should be a static factory function instead of subclass ? yes*
+PoolTable, derived from PhysBody*
+  Update velocities and rotations of pool balls. Find out if there is any ball movement.*
 Drop mathjs dependency*
 Immutable classes?
 
-Add light source(s)
+Add light source(s)*
+Tune imported 3D model size and position.*
 Option to shade nicely, keep option for wireframe mode for debugging
 Try out physics engine
   https://threejs.org/docs/#manual/en/introduction/Libraries-and-Plugins
-
+Change favicon
 
 */
 
