@@ -47,6 +47,45 @@ scene.add( light );
 let table =  createScenarioTable();
 scene.add(table);
 
+/////////////////////////
+/////////////////////////
+/////////////////////////
+import * as CANNON from 'cannon-es'
+
+// Setup our physics world
+const world = new CANNON.World({
+  gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
+})
+
+// Create a sphere body
+const radius = 1 // m
+const sphereBody = new CANNON.Body({
+  mass: 5, // kg
+  shape: new CANNON.Sphere(radius),
+  velocity: new CANNON.Vec3(0.1, 0, 0),
+  linearDamping: 0.01,
+})
+sphereBody.position.set(0, 4, 0) // m
+world.addBody(sphereBody)
+
+// Create a static plane for the ground
+const groundBody = new CANNON.Body({
+  type: CANNON.Body.STATIC, // can also be achieved by setting the mass to 0
+  shape: new CANNON.Plane(),
+})
+groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
+world.addBody(groundBody)
+
+const rad = 0.4 // m
+const geometry = new THREE.SphereGeometry(rad)
+const material = new THREE.MeshNormalMaterial()
+const sphereMesh = new THREE.Mesh(geometry, material)
+scene.add(sphereMesh)
+////////////////////////////////////
+/////////////////////////////
+//////////////////////
+
+
 
 function animate() {
   //console.log("animate");
@@ -60,6 +99,14 @@ function animate() {
     table = createScenarioTable();
     scene.add(table);
   }
+
+  world.fixedStep()
+
+  // the sphere y position shows the sphere falling
+  //console.log(`Sphere y position: ${sphereBody.position.y}`)
+
+  sphereMesh.position.copy(sphereBody.position)
+  sphereMesh.quaternion.copy(sphereBody.quaternion)
   
 	renderer.render( scene, camera );
 }
@@ -89,7 +136,7 @@ Tune imported 3D model size and position.*
 Option to shade nicely, keep option for wireframe mode for debugging
 Try out physics engine
   https://threejs.org/docs/#manual/en/introduction/Libraries-and-Plugins
-Change favicon
+Change favicon*
 
 */
 
