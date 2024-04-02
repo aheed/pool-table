@@ -3,7 +3,8 @@ import './style.css'
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
+import * as CANNON from 'cannon-es'
+import { ballRadius } from './PoolGeometryConstants';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -21,6 +22,43 @@ camera.rotateX(-0.8);
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
 scene.add( directionalLight );
 
+// Setup our physics world
+const world = new CANNON.World({
+  gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
+})
+
+/////////////////////////
+//////////////////////////////////////////////////////////////////////
+// Get static structures from loaded model
+
+function ShapeToStaticBody(shape: CANNON.Shape): CANNON.Body {
+  const trimeshBody: CANNON.Body = new CANNON.Body({ mass: 0 }); // mass 0 indicates static object
+  trimeshBody.addShape(shape);
+  return trimeshBody;
+}
+
+/*
+https://sbcode.net/threejs/physics-cannonjs/
+// example CreateTrimesh usage
+const torusKnotShape = CreateTrimesh(torusKnotMesh.geometry)
+const torusKnotBody = new CANNON.Body({ mass: 1 })
+torusKnotBody.addShape(torusKnotShape)
+torusKnotBody.position.x = torusKnotMesh.position.x
+torusKnotBody.position.y = torusKnotMesh.position.y
+torusKnotBody.position.z = torusKnotMesh.position.z
+world.addBody(torusKnotBody)
+*/
+function CreateTrimesh(geometry: THREE.BufferGeometry, scale: number = 1.0) {
+    const vertices = (geometry.attributes.position as THREE.BufferAttribute).array.map((pos) => pos * scale);
+    const indices = Object.keys(vertices).map(Number)
+    return new CANNON.Trimesh(vertices as unknown as number[], indices)
+}
+
+
+/////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+
 
 const loader = new GLTFLoader();
 
@@ -35,6 +73,20 @@ loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
   gltf.scene.rotateY(Math.PI / 2);
 	scene.add( gltf.scene );
 
+  const cushMesh = gltf.scene.children.find(mesh => mesh.name == "SketchUp053");
+  const cushion = cushMesh?.children[1];
+  const meshScale = cushMesh?.scale.x ?? 1.0; //assume same scale in all 3 dimensions
+  //if (cushion instanceof THREE.Mesh<THREE.BufferGeometry, THREE.Material, THREE.Object3DEventMap>  ) {    
+  const geom = (cushion as THREE.Mesh).geometry as THREE.BufferGeometry;
+  const trimesh = CreateTrimesh(geom, sfac * meshScale);
+  const cushionBody = ShapeToStaticBody(trimesh);
+  cushionBody.position.x = gltf.scene.position.x
+  cushionBody.position.y = gltf.scene.position.y
+  cushionBody.position.z = gltf.scene.position.z
+  cushionBody.quaternion = new CANNON.Quaternion(gltf.scene.quaternion.x, gltf.scene.quaternion.y, gltf.scene.quaternion.z, gltf.scene.quaternion.w);
+  // scale??????
+  world.addBody(cushionBody)
+  
 }, undefined, function ( error ) {
 
 	console.error( error );
@@ -50,22 +102,16 @@ scene.add(table);
 /////////////////////////
 /////////////////////////
 /////////////////////////
-import * as CANNON from 'cannon-es'
-
-// Setup our physics world
-const world = new CANNON.World({
-  gravity: new CANNON.Vec3(0, -9.82, 0), // m/s²
-})
 
 // Create a sphere body
-const radius = 1 // m
+//const radius = 0.2 // m
 const sphereBody = new CANNON.Body({
   mass: 5, // kg
-  shape: new CANNON.Sphere(radius),
-  velocity: new CANNON.Vec3(0.1, 0, 0),
+  shape: new CANNON.Sphere(ballRadius),
+  velocity: new CANNON.Vec3(0.1, 0, -3.5),
   linearDamping: 0.01,
 })
-sphereBody.position.set(0, 4, 0) // m
+sphereBody.position.set(0, 4, 8.0) // m
 world.addBody(sphereBody)
 
 // Create a static plane for the ground
@@ -76,8 +122,8 @@ const groundBody = new CANNON.Body({
 groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0) // make it face up
 world.addBody(groundBody)
 
-const rad = 0.4 // m
-const geometry = new THREE.SphereGeometry(rad)
+//const rad = 0.4 // m
+const geometry = new THREE.SphereGeometry(ballRadius)
 const material = new THREE.MeshNormalMaterial()
 const sphereMesh = new THREE.Mesh(geometry, material)
 scene.add(sphereMesh)
@@ -138,6 +184,10 @@ Try out physics engine
   https://threejs.org/docs/#manual/en/introduction/Libraries-and-Plugins
 Change favicon*
 
+Get selected meshes from loaded model and turn into Cannon static bodies.
+  For debug: also add copies of those meshes to the scene (change its color), move it up a bit. To make sure we got the right mesh.
+Change table top from plane to trimesh.
+Add plane at floor level. For balls jumping over the edge and perhaps bottomless pockets.
 */
 
 /*
