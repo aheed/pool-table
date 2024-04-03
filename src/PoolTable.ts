@@ -1,15 +1,61 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from "three";
+import { BoxGeometry, BufferAttribute, BufferGeometry, Matrix4, Mesh, MeshBasicMaterial, Vector3 } from "three";
 import { PhysBody } from "./PhysBody";
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import * as CANNON from 'cannon-es'
 import { DECELERATION_M_PER_SEC2, MIN_BALL_SPEED_M_PER_SEC, ballRadius, tableDepth, tableThickness, tableWidth } from "./PoolGeometryConstants";
+
+function ShapeToStaticBody(shape: CANNON.Shape): CANNON.Body {
+    const trimeshBody: CANNON.Body = new CANNON.Body({ mass: 0 }); // mass 0 indicates static object
+    trimeshBody.addShape(shape);
+    return trimeshBody;
+  }
+
+function CreateTrimesh(geometry: BufferGeometry, scale: number = 1.0) {
+    const vertices = (geometry.attributes.position as BufferAttribute).array.map((pos) => pos * scale);
+    const indices = Object.keys(vertices).map(Number)
+    return new CANNON.Trimesh(vertices as unknown as number[], indices)
+}
 
 export class PoolTable extends PhysBody {
 
-    constructor() {
+    constructor(world: CANNON.World) {
         super();
-        const geometry = new BoxGeometry(tableWidth, tableThickness, tableDepth, 4, 4);
+        /*const geometry = new BoxGeometry(tableWidth, tableThickness, tableDepth, 4, 4);
         const material = new MeshBasicMaterial({ color: 0x009900, wireframe: true });
         const tableTop = new Mesh(geometry, material);
-        this.addGrPrim(tableTop);
+        this.add(tableTop);*/
+
+        const loader = new GLTFLoader();
+        const thisTable = this;
+
+        loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
+
+            const sfac = 0.902652208826061;
+            let scaleMat = new Matrix4().makeScale(sfac, sfac, sfac);
+            gltf.scene.applyMatrix4(scaleMat);
+            gltf.scene.translateX(1.4158680300807);
+            gltf.scene.translateY(0.1);
+            gltf.scene.translateZ(5.65198550990462);
+            gltf.scene.rotateY(Math.PI / 2);
+            thisTable.add( gltf.scene );
+
+            const cushMesh = gltf.scene.children.find(mesh => mesh.name == "SketchUp053");
+            const cushion = cushMesh?.children[1];
+            const meshScale = cushMesh?.scale.x ?? 1.0; //assume same scale in all 3 dimensions
+            const geom = (cushion as Mesh).geometry as BufferGeometry;
+            const trimesh = CreateTrimesh(geom, sfac * meshScale);
+            const cushionBody = ShapeToStaticBody(trimesh);
+            cushionBody.position.x = gltf.scene.position.x
+            cushionBody.position.y = gltf.scene.position.y
+            cushionBody.position.z = gltf.scene.position.z
+            cushionBody.quaternion = new CANNON.Quaternion(gltf.scene.quaternion.x, gltf.scene.quaternion.y, gltf.scene.quaternion.z, gltf.scene.quaternion.w);
+            world.addBody(cushionBody)
+        
+        }, undefined, function ( error ) {
+
+            console.error( error );
+
+        } );
     }
 
     addBall = (ball: PhysBody) => {

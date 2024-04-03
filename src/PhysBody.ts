@@ -16,8 +16,6 @@ export class PhysBody extends Object3D{
         this.add(newSubBody);
     }
 
-    addGrPrim = (newPrim: Mesh) => this.add(newPrim);
-
     update = (dt: number) => {
         this.subBodies.forEach(sb => sb.update(dt));
 

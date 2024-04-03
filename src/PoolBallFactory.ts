@@ -15,6 +15,6 @@ export const createPoolBall = (ballNumber: number): PhysBody => {
     const poolBallMaterial = new MeshBasicMaterial({ color: color, wireframe: true });
     const mesh = new Mesh(poolBallGeometry, poolBallMaterial);
     const ret = new PhysBody();
-    ret.addGrPrim(mesh);
+    ret.add(mesh);
     return ret;
 }
