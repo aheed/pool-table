@@ -24,3 +24,6 @@ How to get convert BufferGeometry from Object3D with scale/position/rotation to 
 Why is world matrix the same as local matrix for children of scene when the scene has been rotated/tranlated ??
 
 Try next: pass translation, rotation and scale as separate params and use it to normalize buffergeometry.
+
+?
+Why is SketchUp053 not green?

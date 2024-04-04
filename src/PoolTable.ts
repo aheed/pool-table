@@ -28,10 +28,15 @@ export class PoolTable extends PhysBody {
         const loader = new GLTFLoader();
         const thisTable = this;
 
-        const addMeshAsBody = (gltf:GLTF, object3D: Object3D, transform: Matrix4) => {
+        const addMeshAsBody = (gltf:GLTF, object3D: Object3D, tX: number, tY: number, tZ: number, rotY: number, scale: number) => {
             
             const geom = (object3D as Mesh).geometry as BufferGeometry;
-            geom.applyMatrix4(transform);
+            //geom.applyMatrix4(transform);
+
+            geom.scale(scale, scale, scale);
+            geom.rotateY(rotY);
+            geom.translate(tX, tY, tZ);
+
             const trimesh = CreateTrimesh(geom);
             const cushionBody = ShapeToStaticBody(trimesh);
             /*cushionBody.position.x = gltf.scene.position.x
@@ -42,21 +47,22 @@ export class PoolTable extends PhysBody {
             world.addBody(cushionBody)
         }
 
-        const addMeshAsBodyByName = (gltf:GLTF, name: string, transform: Matrix4) => {
+        const addMeshAsBodyByName = (gltf:GLTF, name: string, tX: number, tY: number, tZ: number, rotY: number, scale: number) => {
             const mesh = gltf.scene.children.find(mesh => mesh.name == name);
             if (!mesh) {
                 console.error(`could not load object "${name}"`)
                 return;
             }
-            //mesh.applyMatrix4(transform);
+            //mesh.applyMatrix4(transform);            
+            const meshScale = (mesh.scale.x ?? 1.0) * scale; //assume same scale in all 3 dimensions
+            mesh.scale.set(1.0, 1.0, 1.0);
             thisTable.add( mesh);
-            //const meshScale = (mesh.scale.x ?? 1.0); //assume same scale in all 3 dimensions
             if ( mesh instanceof Group) {
-                mesh.children.forEach(obj => addMeshAsBody(gltf, obj, transform));
+                mesh.children.forEach(obj => addMeshAsBody(gltf, obj, tX, tY, tZ, rotY, meshScale));
                 return;
             }
 
-            addMeshAsBody(gltf, mesh, transform);
+            addMeshAsBody(gltf, mesh, tX, tY, tZ, rotY, meshScale);
         }
 
         loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
@@ -76,7 +82,8 @@ export class PoolTable extends PhysBody {
             //gltf.scene.applyMatrix4(modelMat);
             //thisTable.add( gltf.scene );
             //addMeshAsBodyByName(gltf, "SketchUp053", modelMat);
-            addMeshAsBodyByName(gltf, "SketchUp026", modelMat);
+            addMeshAsBodyByName(gltf, "SketchUp053", 1.4158680300807, 0.1, 5.65198550990462, Math.PI / 2, sfac);
+            addMeshAsBodyByName(gltf, "SketchUp026", 1.4158680300807, 0.1, 5.65198550990462, Math.PI / 2, sfac);
         }, undefined, function ( error ) {
 
             console.error( error );

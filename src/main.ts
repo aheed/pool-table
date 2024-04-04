@@ -13,10 +13,10 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 const color5 = new THREE.Color( 'lightgray' );
 scene.background = color5;
-camera.position.z = 7 * 2;
+camera.position.z = -7 * 2;
 camera.position.y = 2.7 * 2;
 //camera.rotateX(-0.4);
-//camera.rotateY(Math.PI);
+camera.rotateY(Math.PI);
 
 
 // White directional light at half intensity shining from the top.
