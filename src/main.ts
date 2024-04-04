@@ -13,9 +13,11 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 const color5 = new THREE.Color( 'lightgray' );
 scene.background = color5;
-camera.position.z = 7;
-camera.position.y = 2.7;
-camera.rotateX(-0.8);
+camera.position.z = 7 * 2;
+camera.position.y = 2.7 * 2;
+//camera.rotateX(-0.4);
+//camera.rotateY(Math.PI);
+
 
 // White directional light at half intensity shining from the top.
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
@@ -45,7 +47,7 @@ const sphereBody = new CANNON.Body({
   velocity: new CANNON.Vec3(0.1, 0, -4.1),
   linearDamping: 0.01,
 })
-sphereBody.position.set(0, 4, 8.0) // m
+sphereBody.position.set(0, 4, 4.0) // m
 world.addBody(sphereBody)
 
 // Create a static plane for the ground

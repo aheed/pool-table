@@ -20,15 +20,16 @@ export class PoolTable extends PhysBody {
 
     constructor(world: CANNON.World) {
         super();
-        /*const geometry = new BoxGeometry(tableWidth, tableThickness, tableDepth, 4, 4);
-        const material = new MeshBasicMaterial({ color: 0x009900, wireframe: true });
+        const geometry = new BoxGeometry(tableWidth, tableThickness * 2, tableDepth, 4, 4);
+        const material = new MeshBasicMaterial({ color: 0x005500, wireframe: true });
         const tableTop = new Mesh(geometry, material);
-        this.add(tableTop);*/
+        this.add(tableTop);
 
         const loader = new GLTFLoader();
         const thisTable = this;
 
         const addMeshAsBody = (gltf:GLTF, object3D: Object3D, scale: number) => {            
+            
             const geom = (object3D as Mesh).geometry as BufferGeometry;
             const trimesh = CreateTrimesh(geom, scale);
             const cushionBody = ShapeToStaticBody(trimesh);
@@ -45,6 +46,7 @@ export class PoolTable extends PhysBody {
                 console.error(`could not load object "${name}"`)
                 return;
             }
+            thisTable.add( mesh);
             const meshScale = (mesh.scale.x ?? 1.0) * scale; //assume same scale in all 3 dimensions
             if ( mesh instanceof Group) {
                 mesh.children.forEach(obj => addMeshAsBody(gltf, obj, meshScale));
@@ -63,8 +65,9 @@ export class PoolTable extends PhysBody {
             gltf.scene.translateY(0.1);
             gltf.scene.translateZ(5.65198550990462);
             gltf.scene.rotateY(Math.PI / 2);
-            thisTable.add( gltf.scene );
+            //thisTable.add( gltf.scene );
             addMeshAsBodyByName(gltf, "SketchUp053", sfac);
+            addMeshAsBodyByName(gltf, "SketchUp026", sfac);
         }, undefined, function ( error ) {
 
             console.error( error );
