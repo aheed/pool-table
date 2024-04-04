@@ -28,46 +28,54 @@ export class PoolTable extends PhysBody {
         const loader = new GLTFLoader();
         const thisTable = this;
 
-        const addMeshAsBody = (gltf:GLTF, object3D: Object3D, scale: number) => {            
+        const addMeshAsBody = (gltf:GLTF, object3D: Object3D) => {            
             
             const geom = (object3D as Mesh).geometry as BufferGeometry;
-            const trimesh = CreateTrimesh(geom, scale);
+            const trimesh = CreateTrimesh(geom);
             const cushionBody = ShapeToStaticBody(trimesh);
             cushionBody.position.x = gltf.scene.position.x
             cushionBody.position.y = gltf.scene.position.y
             cushionBody.position.z = gltf.scene.position.z
             cushionBody.quaternion = new CANNON.Quaternion(gltf.scene.quaternion.x, gltf.scene.quaternion.y, gltf.scene.quaternion.z, gltf.scene.quaternion.w);
+            cushionBody.shapes
             world.addBody(cushionBody)
         }
 
-        const addMeshAsBodyByName = (gltf:GLTF, name: string, scale: number) => {
+        const addMeshAsBodyByName = (gltf:GLTF, name: string, transform: Matrix4) => {
             const mesh = gltf.scene.children.find(mesh => mesh.name == name);
             if (!mesh) {
                 console.error(`could not load object "${name}"`)
                 return;
             }
+            mesh.applyMatrix4(transform);
             thisTable.add( mesh);
-            const meshScale = (mesh.scale.x ?? 1.0) * scale; //assume same scale in all 3 dimensions
+            const meshScale = (mesh.scale.x ?? 1.0); //assume same scale in all 3 dimensions
             if ( mesh instanceof Group) {
-                mesh.children.forEach(obj => addMeshAsBody(gltf, obj, meshScale));
+                mesh.children.forEach(obj => addMeshAsBody(gltf, obj));
                 return;
             }
 
-            addMeshAsBody(gltf, mesh, meshScale);
+            addMeshAsBody(gltf, mesh);
         }
 
         loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
 
             const sfac = 0.902652208826061;
             let scaleMat = new Matrix4().makeScale(sfac, sfac, sfac);
-            gltf.scene.applyMatrix4(scaleMat);
+            let transMat = new Matrix4().makeTranslation(new Vector3(1.4158680300807, 0.1, 5.65198550990462));
+            let rotMat = new Matrix4().makeRotationY(Math.PI / 2);
+            /*gltf.scene.applyMatrix4(scaleMat);
             gltf.scene.translateX(1.4158680300807);
             gltf.scene.translateY(0.1);
             gltf.scene.translateZ(5.65198550990462);
             gltf.scene.rotateY(Math.PI / 2);
+            
+            */
+            let modelMat = rotMat.premultiply(transMat).multiply(scaleMat);
+            //gltf.scene.applyMatrix4(modelMat);
             //thisTable.add( gltf.scene );
-            addMeshAsBodyByName(gltf, "SketchUp053", sfac);
-            addMeshAsBodyByName(gltf, "SketchUp026", sfac);
+            //addMeshAsBodyByName(gltf, "SketchUp053", modelMat);
+            addMeshAsBodyByName(gltf, "SketchUp026", modelMat);
         }, undefined, function ( error ) {
 
             console.error( error );
