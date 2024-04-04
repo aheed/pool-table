@@ -28,16 +28,17 @@ export class PoolTable extends PhysBody {
         const loader = new GLTFLoader();
         const thisTable = this;
 
-        const addMeshAsBody = (gltf:GLTF, object3D: Object3D) => {            
+        const addMeshAsBody = (gltf:GLTF, object3D: Object3D, transform: Matrix4) => {
             
             const geom = (object3D as Mesh).geometry as BufferGeometry;
+            geom.applyMatrix4(transform);
             const trimesh = CreateTrimesh(geom);
             const cushionBody = ShapeToStaticBody(trimesh);
-            cushionBody.position.x = gltf.scene.position.x
+            /*cushionBody.position.x = gltf.scene.position.x
             cushionBody.position.y = gltf.scene.position.y
             cushionBody.position.z = gltf.scene.position.z
             cushionBody.quaternion = new CANNON.Quaternion(gltf.scene.quaternion.x, gltf.scene.quaternion.y, gltf.scene.quaternion.z, gltf.scene.quaternion.w);
-            cushionBody.shapes
+            */
             world.addBody(cushionBody)
         }
 
@@ -47,15 +48,15 @@ export class PoolTable extends PhysBody {
                 console.error(`could not load object "${name}"`)
                 return;
             }
-            mesh.applyMatrix4(transform);
+            //mesh.applyMatrix4(transform);
             thisTable.add( mesh);
-            const meshScale = (mesh.scale.x ?? 1.0); //assume same scale in all 3 dimensions
+            //const meshScale = (mesh.scale.x ?? 1.0); //assume same scale in all 3 dimensions
             if ( mesh instanceof Group) {
-                mesh.children.forEach(obj => addMeshAsBody(gltf, obj));
+                mesh.children.forEach(obj => addMeshAsBody(gltf, obj, transform));
                 return;
             }
 
-            addMeshAsBody(gltf, mesh);
+            addMeshAsBody(gltf, mesh, transform);
         }
 
         loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {

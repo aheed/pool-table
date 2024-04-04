@@ -17,7 +17,10 @@ Cannon based pool balls with texture mapping
 
 Use world coordinates only for table parts.
 How to get convert BufferGeometry from Object3D with scale/position/rotation to BufferGeometry with 1:1 scale world coordinates?
-  Do BufferGeometry methods change all vertices?
+  Do BufferGeometry methods change all vertices? yes*
      https://threejs.org/docs/#api/en/core/BufferGeometry
      Can be used to normalize scale?
+       .applyMatrix4  does not do what we want: not same result as calling .applyMatrix4(transform) on the parent object3D.
 Why is world matrix the same as local matrix for children of scene when the scene has been rotated/tranlated ??
+
+Try next: pass translation, rotation and scale as separate params and use it to normalize buffergeometry.
