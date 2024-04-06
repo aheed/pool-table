@@ -12,8 +12,8 @@ function ShapeToStaticBody(shape: CANNON.Shape): CANNON.Body {
 
 function CreateTrimesh(geometry: BufferGeometry, scale: number = 1.0) {
     const vertices = (geometry.attributes.position as BufferAttribute).array.map((pos) => pos * scale);
-    const indices = Object.keys(vertices).map(Number)
-    return new CANNON.Trimesh(vertices as unknown as number[], indices)
+    const indices = (geometry.index as BufferAttribute).array;
+    return new CANNON.Trimesh(vertices as unknown as number[], indices as unknown as number[]);
 }
 
 export class PoolTable extends PhysBody {
