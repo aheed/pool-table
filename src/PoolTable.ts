@@ -28,22 +28,13 @@ export class PoolTable extends PhysBody {
         const loader = new GLTFLoader();
         const thisTable = this;
 
-        const addMeshAsBody = (gltf:GLTF, object3D: Object3D, tX: number, tY: number, tZ: number, rotY: number, scale: number) => {
-            
+        const addMeshAsBody = (object3D: Object3D, tX: number, tY: number, tZ: number, rotY: number, scale: number) => {
             const geom = (object3D as Mesh).geometry as BufferGeometry;
-            //geom.applyMatrix4(transform);
-
             geom.scale(scale, scale, scale);
             geom.rotateY(rotY);
             geom.translate(tX, tY, tZ);
-
             const trimesh = CreateTrimesh(geom);
             const cushionBody = ShapeToStaticBody(trimesh);
-            /*cushionBody.position.x = gltf.scene.position.x
-            cushionBody.position.y = gltf.scene.position.y
-            cushionBody.position.z = gltf.scene.position.z
-            cushionBody.quaternion = new CANNON.Quaternion(gltf.scene.quaternion.x, gltf.scene.quaternion.y, gltf.scene.quaternion.z, gltf.scene.quaternion.w);
-            */
             world.addBody(cushionBody)
         }
 
@@ -58,32 +49,25 @@ export class PoolTable extends PhysBody {
             mesh.scale.set(1.0, 1.0, 1.0);
             thisTable.add( mesh);
             if ( mesh instanceof Group) {
-                mesh.children.forEach(obj => addMeshAsBody(gltf, obj, tX, tY, tZ, rotY, meshScale));
+                mesh.children.forEach(obj => addMeshAsBody(obj, tX, tY, tZ, rotY, meshScale));
                 return;
             }
 
-            addMeshAsBody(gltf, mesh, tX, tY, tZ, rotY, meshScale);
+            addMeshAsBody(mesh, tX, tY, tZ, rotY, meshScale);
         }
 
-        loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
+        const addMeshAsBodyByNameCurrying = (gltf:GLTF, tX: number, tY: number, tZ: number, rotY: number, scale: number) =>
+            (name: string) => addMeshAsBodyByName(gltf, name, tX, tY, tZ, rotY, scale);
 
+        loader.load( 'simple-pool-table/source/noballs.glb', function ( gltf ) {
             const sfac = 0.902652208826061;
-            let scaleMat = new Matrix4().makeScale(sfac, sfac, sfac);
-            let transMat = new Matrix4().makeTranslation(new Vector3(1.4158680300807, 0.1, 5.65198550990462));
-            let rotMat = new Matrix4().makeRotationY(Math.PI / 2);
-            /*gltf.scene.applyMatrix4(scaleMat);
-            gltf.scene.translateX(1.4158680300807);
-            gltf.scene.translateY(0.1);
-            gltf.scene.translateZ(5.65198550990462);
-            gltf.scene.rotateY(Math.PI / 2);
-            
-            */
-            let modelMat = rotMat.premultiply(transMat).multiply(scaleMat);
-            //gltf.scene.applyMatrix4(modelMat);
-            //thisTable.add( gltf.scene );
-            //addMeshAsBodyByName(gltf, "SketchUp053", modelMat);
-            addMeshAsBodyByName(gltf, "SketchUp053", 1.4158680300807, 0.1, 5.65198550990462, Math.PI / 2, sfac);
-            addMeshAsBodyByName(gltf, "SketchUp026", 1.4158680300807, 0.1, 5.65198550990462, Math.PI / 2, sfac);
+            const tX = 1.4158680300807;
+            const tY = 0.1;
+            const tZ = 5.65198550990462;
+            const rotY = Math.PI / 2;
+            const addMeshAsBodyByNameCurried = addMeshAsBodyByNameCurrying(gltf, tX, tY, tZ, rotY, sfac);
+            addMeshAsBodyByNameCurried("SketchUp053");
+            addMeshAsBodyByNameCurried("SketchUp026");
         }, undefined, function ( error ) {
 
             console.error( error );
